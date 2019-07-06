@@ -1,0 +1,36 @@
+{
+  "name": "gt3",
+  "version": "0.0.1",
+  "description": "",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "develop": "webpack --watch --config webpack.dev.js",
+    "build": "webpack --config webpack.prod.js",
+    "clean": "rm -rf dist node_modules"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/chrome": "0.0.86",
+    "@types/firefox-webext-browser": "^67.0.2",
+    "@types/nanoid": "^2.0.0",
+    "copy-webpack-plugin": "^5.0.3",
+    "css-loader": "^3.0.0",
+    "nanoid": "^2.0.3",
+    "ts-loader": "^6.0.4",
+    "typescript": "^3.5.2",
+    "vue-loader": "^15.7.0",
+    "vue-template-compiler": "^2.6.10",
+    "vue-template-loader": "^1.0.0",
+    "web-ext": "^3.1.0",
+    "webpack": "^4.35.2",
+    "webpack-cli": "^3.3.5",
+    "webpack-merge": "^4.2.1"
+  },
+  "dependencies": {
+    "vue": "^2.6.10",
+    "vue2-animate": "^2.1.0",
+    "vuedraggable": "^2.23.0"
+  }
+}
