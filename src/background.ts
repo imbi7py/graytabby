@@ -10,7 +10,7 @@ async function clickHandler() {
   if (!homeTab) homeTab = await createTab({active: true, url: 'home.html'});
   await closeTabs(toArchiveTabs.map(t => t.id));
   await closeTabs(toCloseTabs.map(t => t.id));
-  let focus = updateTab(homeTab.id, {active: true})
+  let focus = updateTab(homeTab.id, {active: true});
   if (toArchiveTabs.length > 0) {
     let now = new Date();
     await moreTabs.pub({

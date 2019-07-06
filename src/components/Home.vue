@@ -35,7 +35,7 @@
   import {groupsFromLocalStorage, groupsToLocalStorage, faviconLocation} from "../utils";
   import {createTab} from "../ext";
   import imgWithFallback from './ImgWithFallback.vue';
-  import {TabGroup} from "../types";
+  import {TabGroup} from "../../@types/graytabby";
 
   export default Vue.extend({
     data: function () {

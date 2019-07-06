@@ -3,7 +3,7 @@
  */
 
 import {isFireFox} from "./ext";
-import {TabGroup} from "./types";
+import {TabGroup} from "../@types/graytabby";
 
 interface Payload<T> {
   type: string

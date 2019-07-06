@@ -1,4 +1,4 @@
-import {TabGroup, TabSummary} from "./types";
+import {TabGroup, TabSummary} from "../@types/graytabby";
 
 export function castTab(nativeTab: any): TabSummary | null {
   if (nativeTab.windowId == undefined

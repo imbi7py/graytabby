@@ -3,7 +3,7 @@
  *
  * Right now it's just for FireFox / Chrome.
  */
-import {TabSummary} from "./types";
+import {TabSummary} from "../@types/graytabby";
 import {castTab} from "./utils";
 import {pageLoad} from "./brokers";
 

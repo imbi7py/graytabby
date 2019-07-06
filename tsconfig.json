@@ -12,6 +12,10 @@
     "moduleResolution": "node",
     "lib": [
       "es2015", "dom"
+    ],
+    "typeRoots": [
+      "@types",
+      "node_modules/@types"
     ]
   }
 }
