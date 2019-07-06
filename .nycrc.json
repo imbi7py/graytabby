@@ -1,14 +1,13 @@
 {
   "extension": [
-    ".ts",
-    ".tsx"
+    ".ts"
   ],
   "exclude": [
     "**/*.d.ts"
   ],
   "reporter": [
-    "html",
-    "text"
+    "text",
+    "lcov"
   ],
   "include": [
     "src/**/*.ts"
