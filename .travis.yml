@@ -11,5 +11,7 @@ before_install:
 jobs:
   include:
     - stage: test
+      name: Unit Tests
       script: npm test
-    - script: npm run build
+    - name: Bundle Extension
+      script: npm run build
