@@ -1,6 +1,6 @@
 <template>
   <div id="top">
-    loaded with happy
+    <h1>Welcome to GrayTabby!</h1>
     <div v-for="(group, gidx) in groups">
       <span id="heading">
         <b>{{group.title}}</b>
@@ -18,7 +18,7 @@
                                width="16" height="16"/>
             <a :href="tab.url"
                @click.left="clickLink($event, tab.url, gidx, tidx)"
-            >{{tab.title}}</a> and hibye
+            >{{tab.title}}</a>
           </li>
         </transition-group>
       </draggable>
@@ -34,7 +34,7 @@
   import {moreTabs, pageLoad} from "../brokers";
   import {groupsFromLocalStorage, groupsToLocalStorage, faviconLocation} from "../utils";
   import {createTab} from "../ext";
-  import imgWithFallback from './img-with-fallback.vue';
+  import imgWithFallback from './ImgWithFallback.vue';
   import {TabGroup} from "../types";
 
   export default Vue.extend({

@@ -5,8 +5,9 @@
     // this enables stricter inference for data properties on `this`
     "strict": true,
     "strictNullChecks": false,
-    // if using webpack 2+ or rollup, to leverage tree shaking:
-    "module": "es2015",
+    // Vue recommends es2015 here, but I can't get mocha to work
+    // without commonjs. See https://github.com/TypeStrong/ts-node/issues/182
+    "module": "commonjs",
     "esModuleInterop": true,
     "moduleResolution": "node",
     "lib": [

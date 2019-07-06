@@ -3,3 +3,4 @@ dist/
 .idea/
 mix-manifest.json
 .nyc_output/
+coverage/

@@ -1,5 +1,5 @@
 import Vue from 'vue';
-import home from './components/home.vue'
+import home from './components/Home.vue'
 
 new Vue({
   el: "#app",
