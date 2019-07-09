@@ -34,7 +34,7 @@ export function archivePlan(tabs: TabSummary[], homeURL: string): [TabSummary | 
   for (const tab of tabs) {
     if (tab.url === homeURL) {
       if (!homeTab) homeTab = tab;  // Use existing hometab if possible.
-      else tabsToArchive.push(tab);
+      else tabsToClose.push(tab);
     } else {
       if (tab.pinned) continue;
       if (tab.url.startsWith('about:')) tabsToClose.push(tab);
