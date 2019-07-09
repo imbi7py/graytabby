@@ -126,7 +126,7 @@
 
   /*See https://vuejs.org/v2/guide/transitions.html#Transitioning-Between-Components*/
   .fadeLeft-move {
-    transition: transform 1s;
+    transition: transform .5s;
   }
 
 </style>
