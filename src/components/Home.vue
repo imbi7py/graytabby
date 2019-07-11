@@ -1,6 +1,7 @@
 <template>
   <div id="top">
     <h1>Welcome to GrayTabby!</h1>
+    <router-link to="/options">opitons</router-link>
     <div v-for="(group, gidx) in groups">
       <span id="heading">
         <b>{{group.title}}</b>
