@@ -47,6 +47,5 @@ describe('archivePlan', () => {
       [[1, 2]]);
     expect(tabsToClose.map(x => [x.windowId, x.id])).deep.equal(
       [[1, 1]]);
-
   });
 });
