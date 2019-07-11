@@ -1,5 +1,5 @@
 import {TabGroup, TabSummary} from "../@types/graytabby";
-import {homePage} from "./brokers";
+import {getURL} from "./ext";
 
 export function castTab(nativeTab: any): TabSummary | null {
   if (nativeTab.windowId == undefined
@@ -15,6 +15,10 @@ export function castTab(nativeTab: any): TabSummary | null {
     url: nativeTab.url,
     title: nativeTab.title
   }
+}
+
+export function appURL(): string {
+  return getURL('app.html');
 }
 
 export function groupsFromLocalStorage(): TabGroup[] {
@@ -37,11 +41,3 @@ export function getDomain(url: string): string {
 export function faviconLocation(url: string): string {
   return 'https://www.google.com/s2/favicons?domain=' + getDomain(url);
 }
-
-// This seems like a code smell, but it's a good way to get the
-// real URL of the home page in all environments.
-export let homePageUrl = '';
-// homePage.sub(msg => {
-//   console.log('got home page', msg);
-//   homePageUrl = msg;
-// });

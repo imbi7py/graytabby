@@ -1,12 +1,13 @@
 import {actionClickHandler, closeTabs, createTab, getAllTabs, getURL, updateTab} from "./ext";
 import {moreTabs} from "./brokers";
 import {archivePlan} from "./archive";
+import {appURL} from "./utils";
 
 
 async function clickHandler() {
   const allTabs = await getAllTabs();
-  const homeURL = getURL('app.html');
-  let [homeTab, toArchiveTabs, toCloseTabs] = archivePlan(allTabs, homeURL);
+  const homeUrl = appURL() + '#/';
+  let [homeTab, toArchiveTabs, toCloseTabs] = archivePlan(allTabs, homeUrl);
   if (!homeTab) homeTab = await createTab({active: true, url: 'app.html'});
   await closeTabs(toArchiveTabs.map(t => t.id));
   await closeTabs(toCloseTabs.map(t => t.id));

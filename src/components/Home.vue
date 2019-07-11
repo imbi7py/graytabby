@@ -28,8 +28,13 @@
   import Vue from 'vue';
   import nanoid from 'nanoid';
 
-  import {homePage, moreTabs, pageLoad} from "../brokers";
-  import {groupsFromLocalStorage, groupsToLocalStorage, faviconLocation} from "../utils";
+  import {moreTabs, pageLoad} from "../brokers";
+  import {
+    groupsFromLocalStorage,
+    groupsToLocalStorage,
+    faviconLocation,
+    appURL
+  } from "../utils";
   import {createTab} from "../ext";
   import imgWithFallback from './ImgWithFallback.vue';
   import {TabGroup} from "../../@types/graytabby";
@@ -51,8 +56,6 @@
         }
       );
       await pageLoad.pub(null);
-      console.log('sending', this.$route.fullPath);
-      await homePage.pub(this.$route.fullPath);
     },
     methods: {
       clickLink: function (event: Event, url: string, gidx: number, tidx: number) {
