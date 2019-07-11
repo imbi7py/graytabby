@@ -1,7 +1,7 @@
 <template>
   <div id="top">
     <h1>Welcome to GrayTabby!</h1>
-    <router-link to="/options">opitons</router-link>
+    <button @click="globalState.view = 'options'">Options</button>
     <div v-for="(group, gidx) in groups">
       <span id="heading">
         <b>{{group.title}}</b>
@@ -25,7 +25,7 @@
 </template>
 
 <script lang="ts">
-  import Vue from 'vue';
+  import Vue, {PropType} from 'vue';
   import nanoid from 'nanoid';
 
   import {moreTabs, pageLoad} from "../brokers";
@@ -33,13 +33,13 @@
     groupsFromLocalStorage,
     groupsToLocalStorage,
     faviconLocation,
-    appURL
   } from "../utils";
   import {createTab} from "../ext";
   import imgWithFallback from './ImgWithFallback.vue';
   import {TabGroup} from "../../@types/graytabby";
 
   export default Vue.extend({
+    props: ['globalState'],
     data: function () {
       return {
         /**
@@ -85,7 +85,7 @@
 
 <style scoped>
   #top {
-    font-size: 12px;
+    /*font-size: 12px;*/
   }
 
   #heading {
