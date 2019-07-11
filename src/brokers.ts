@@ -40,3 +40,4 @@ class Broker<MessageT> {
 
 export const moreTabs = new Broker<TabGroup>('moreTabs');
 export const pageLoad = new Broker<void>('pageLoad');
+export const homePage = new Broker<string>('homePage');

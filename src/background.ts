@@ -5,9 +5,9 @@ import {archivePlan} from "./archive";
 
 async function clickHandler() {
   const allTabs = await getAllTabs();
-  const homeURL = getURL('home.html');
+  const homeURL = getURL('app.html');
   let [homeTab, toArchiveTabs, toCloseTabs] = archivePlan(allTabs, homeURL);
-  if (!homeTab) homeTab = await createTab({active: true, url: 'home.html'});
+  if (!homeTab) homeTab = await createTab({active: true, url: 'app.html'});
   await closeTabs(toArchiveTabs.map(t => t.id));
   await closeTabs(toCloseTabs.map(t => t.id));
   let focus = updateTab(homeTab.id, {active: true});

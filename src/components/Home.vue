@@ -10,7 +10,6 @@
         </span>
       </span>
       <ul>
-        <!-- Remember the parent group ID on the elem, so we can reference it in the beforeLeave callback.-->
         <li v-for="(tab, tidx) in group.tabs" :key="tab.displayKey"
             :data-parent-gid="gidx">
           <img-with-fallback :src="faviconLocation(tab.url)"
@@ -29,7 +28,7 @@
   import Vue from 'vue';
   import nanoid from 'nanoid';
 
-  import {moreTabs, pageLoad} from "../brokers";
+  import {homePage, moreTabs, pageLoad} from "../brokers";
   import {groupsFromLocalStorage, groupsToLocalStorage, faviconLocation} from "../utils";
   import {createTab} from "../ext";
   import imgWithFallback from './ImgWithFallback.vue';
@@ -47,23 +46,21 @@
     mounted: async function () {
       this.groups = groupsFromLocalStorage();
       moreTabs.sub(group => {
-          // TODO dont do this unconditionally?
           for (let tab of group.tabs) tab.displayKey = nanoid();
           this.groups.unshift(group);
         }
       );
       await pageLoad.pub(null);
+      console.log('sending', this.$route.fullPath);
+      await homePage.pub(this.$route.fullPath);
     },
     methods: {
-      beforeLeave: function (el: Element) {
-        let idx = parseInt(el.getAttribute('data-parent-gid'));
-        if (this.groups[idx].tabs.length === 0) {
-          this.groups.splice(idx, 1);
-        }
-      },
       clickLink: function (event: Event, url: string, gidx: number, tidx: number) {
         event.preventDefault();
         this.groups[gidx].tabs.splice(tidx, 1);
+        if (this.groups[gidx].tabs.length == 0) {
+          this.groups.splice(gidx, 1);
+        }
         createTab({url, active: false});
       },
       faviconLocation

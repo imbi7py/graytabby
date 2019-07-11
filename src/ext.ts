@@ -29,10 +29,10 @@ export function actionClickHandler(func: (...args: any[]) => any): void {
 /**
  * Get the full URL to an asset belonging to this extension.
  *
- * e.g. moz-extension://780d1bd5-ae22-ba49-9e38-f9b544d288c3/home.html
- * e.g. chrome-extension://iidiphhaelgakfockabcekejagapmmcd/home.html
+ * e.g. moz-extension://780d1bd5-ae22-ba49-9e38-f9b544d288c3/app.html
+ * e.g. chrome-extension://iidiphhaelgakfockabcekejagapmmcd/app.html
  *
- * @param path the path to the asset, e.g. 'home.html'
+ * @param path the path to the asset, e.g. 'app.html'
  */
 export function getURL(path: string): string {
   if (isFireFox()) return browser.extension.getURL(path);
