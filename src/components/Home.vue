@@ -50,6 +50,7 @@
     },
     mounted: async function () {
       this.groups = groupsFromLocalStorage();
+      console.log(window.location.pathname);
       moreTabs.sub(group => {
           for (let tab of group.tabs) tab.displayKey = nanoid();
           this.groups.unshift(group);
