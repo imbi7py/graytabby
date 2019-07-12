@@ -12,3 +12,7 @@ export interface TabGroup {
   title: string,
   date: Date
 }
+
+export interface Options {
+  fontSize: number
+}

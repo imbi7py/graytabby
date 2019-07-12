@@ -32,6 +32,7 @@ export function archivePlan(tabs: TabSummary[], homeURL: string): [TabSummary | 
   let homeTab: TabSummary | null = null;
 
   for (const tab of tabs) {
+    console.log(tab.url, homeURL);
     if (tab.url === homeURL) {
       if (!homeTab) homeTab = tab;  // Use existing hometab if possible.
       else tabsToClose.push(tab);

@@ -29,15 +29,11 @@
   import nanoid from 'nanoid';
 
   import {moreTabs, pageLoad} from "../brokers";
-  import {
-    groupsFromLocalStorage,
-    groupsToLocalStorage,
-    faviconLocation,
-    appURL
-  } from "../utils";
+  import {faviconLocation} from "../utils";
   import {createTab} from "../ext";
   import imgWithFallback from './ImgWithFallback.vue';
   import {TabGroup} from "../../@types/graytabby";
+  import {tabsStore} from "../storage";
 
   export default Vue.extend({
     data: function () {
@@ -49,7 +45,7 @@
       }
     },
     mounted: async function () {
-      this.groups = groupsFromLocalStorage();
+      this.groups = await tabsStore.get() || [];
       moreTabs.sub(group => {
           for (let tab of group.tabs) tab.displayKey = nanoid();
           this.groups.unshift(group);
@@ -71,7 +67,7 @@
     watch: {
       groups: {
         handler: function (newGroups) {
-          groupsToLocalStorage(newGroups);
+          tabsStore.put(newGroups);
         },
         deep: true
       }

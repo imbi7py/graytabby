@@ -97,7 +97,6 @@ export async function createTab(createProperties: chrome.tabs.CreateProperties):
       }
     });
   })
-
 }
 
 export async function updateTab(tabId: number, updateProperties: chrome.tabs.UpdateProperties): Promise<void> {
