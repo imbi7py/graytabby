@@ -1,6 +1,7 @@
 <template>
-  <div id="top">
-    <h1>Welcome to GrayTabby!</h1>
+  <div>
+    <h1 class="md-display-1">Welcome to GrayTabby!</h1>
+
     <div id="debug">
       Debugging<br>
       Bytes in storage: {{approxSize()}}<br>
@@ -100,10 +101,6 @@
 </script>
 
 <style scoped>
-  #top {
-    font-size: 12px;
-  }
-
   #heading {
     font-family: Palatino, serif;
   }

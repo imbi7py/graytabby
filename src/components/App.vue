@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div id="top">
     <router-view></router-view>
   </div>
 </template>
@@ -10,5 +10,8 @@
   export default Vue.extend({})
 </script>
 
-<style scoped>
+<style>
+  #top {
+    padding: 10px;
+  }
 </style>
