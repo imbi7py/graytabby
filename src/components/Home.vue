@@ -9,7 +9,7 @@
       <router-link to="/options">options</router-link>
     </div>
     <div v-for="(group, gidx) in groups">
-      <span id="heading">
+      <span>
         <b>{{new Date(group.date * 1000).toLocaleString()}}</b>
         <span id="info">
         ({{group.tabs.length}} tab{{group.tabs.length > 1 ? 's': ''}})
@@ -101,10 +101,6 @@
 </script>
 
 <style scoped>
-  #heading {
-    font-family: Palatino, serif;
-  }
-
   ul {
     list-style-type: none;
     padding-left: 20px;
