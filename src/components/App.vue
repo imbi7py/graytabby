@@ -4,6 +4,7 @@
     <div id="debug">
       Debugging<br>
       Bytes in storage: {{approxSize()}}<br>
+      Num tabs: {{numTabs()}}
       <button @click="double()">double</button>
       <br>
     </div>
@@ -56,6 +57,11 @@
       await pageLoad.pub(null);
     },
     methods: {
+      numTabs: function() {
+        let sum = 0;
+        for (let group of this.groups) sum += group.tabs.length;
+        return sum;
+      },
       processMoreTabs: function(tabSummaries: TabSummary[]) {
         let now = new Date();
         let group: TabGroup = {

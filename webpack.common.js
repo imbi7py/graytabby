@@ -6,8 +6,7 @@ const VueLoaderPlugin = require('vue-loader/lib/plugin');
 module.exports = {
   entry: {
     background: './src/background.ts',
-    app: './src/app.ts',
-    options: './src/options.ts',
+    app: './src/app.ts'
   },
   module: {
     rules: [
