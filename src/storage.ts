@@ -3,6 +3,7 @@ import {Options, TabGroup} from "../@types/graytabby";
 
 class Store<PayloadT> {
   protected key: string;
+  public approxSize: number;
 
   constructor(key: string) {
     this.key = key;
@@ -10,7 +11,10 @@ class Store<PayloadT> {
 
   public put(value: PayloadT): Promise<void> {
     let entry: any = {};
-    entry[this.key] = JSON.stringify(value);
+    console.log(value);
+    let strVal = JSON.stringify(value);
+    this.approxSize = Buffer.byteLength(strVal, 'utf8');
+    entry[this.key] = strVal;
     if (isFireFox()) return browser.storage.local.set(entry);
     return new Promise<void>(resolve => chrome.storage.local.set(entry, resolve))
   }

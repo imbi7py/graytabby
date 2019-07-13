@@ -4,13 +4,13 @@ export interface TabSummary {
   id: number,
   url: string,
   title: string,
-  displayKey?: string
+  key?: string
 }
 
 export interface TabGroup {
   tabs: TabSummary[],
-  title: string,
-  date: Date
+  date: number,
+  key: string
 }
 
 export interface Options {

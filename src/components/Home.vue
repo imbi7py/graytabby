@@ -1,10 +1,15 @@
 <template>
   <div id="top">
     <h1>Welcome to GrayTabby!</h1>
-    <router-link to="/options">opitons</router-link>
+    <div id="debug">
+      Debugging<br>
+      Bytes in storage: {{approxSize()}}<br>
+      <button @click="double()">double</button><br>
+      <router-link to="/options">options</router-link>
+    </div>
     <div v-for="(group, gidx) in groups">
       <span id="heading">
-        <b>{{group.title}}</b>
+        <b>{{new Date(group.date * 1000).toLocaleString()}}</b>
         <span id="info">
         ({{group.tabs.length}} tab{{group.tabs.length > 1 ? 's': ''}})
         </span>
@@ -45,9 +50,18 @@
       }
     },
     mounted: async function () {
-      this.groups = await tabsStore.get() || [];
-      moreTabs.sub(group => {
-          for (let tab of group.tabs) tab.displayKey = nanoid();
+      this.groups = await tabsStore.get();
+      moreTabs.sub(tabSummaries => {
+        let now = new Date();
+        let group: TabGroup = {
+            tabs: tabSummaries,
+            key: nanoid(9),
+            date: Math.round(now.getTime() / 1000)
+          };
+          let counter = 0;
+          for (let tab of group.tabs) {
+            tab.key = group.key + counter++;
+          }
           this.groups.unshift(group);
         }
       );
@@ -62,12 +76,18 @@
         }
         createTab({url, active: false});
       },
+      approxSize: function () {
+        return tabsStore.approxSize;
+      },
+      double: async function () {
+        await moreTabs.pub([]);
+      },
       faviconLocation
     },
     watch: {
       groups: {
-        handler: function (newGroups) {
-          tabsStore.put(newGroups);
+        handler: async function (newGroups) {
+          await tabsStore.put(newGroups);
         },
         deep: true
       }
@@ -101,5 +121,15 @@
   #info {
     padding-left: 10px;
     color: gray;
+  }
+
+  #debug {
+    float: right;
+    padding: 10px;
+    margin:7px auto;
+    -moz-box-shadow: 0 1px 3px rgba(0,0,0,0.5);
+    -webkit-box-shadow: 0 1px 3px rgba(0,0,0,0.5);
+    -moz-border-radius: 15px;
+    -webkit-border-radius: 15px;
   }
 </style>

@@ -2,6 +2,8 @@ import {actionClickHandler, closeTabs, createTab, getAllTabs, getURL, updateTab}
 import {moreTabs} from "./brokers";
 import {archivePlan} from "./archive";
 import {appURL} from "./utils";
+import nanoid = require("nanoid");
+import {tabsStore} from "./storage";
 
 
 async function clickHandler() {
@@ -13,12 +15,7 @@ async function clickHandler() {
   await closeTabs(toCloseTabs.map(t => t.id));
   let focus = updateTab(homeTab.id, {active: true});
   if (toArchiveTabs.length > 0) {
-    let now = new Date();
-    await moreTabs.pub({
-      date: now,
-      title: now.toLocaleString(),
-      tabs: toArchiveTabs
-    });
+    await moreTabs.pub(toArchiveTabs);
   }
   await focus;
 }

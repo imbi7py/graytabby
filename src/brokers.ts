@@ -3,7 +3,7 @@
  */
 
 import {isFireFox} from "./ext";
-import {TabGroup} from "../@types/graytabby";
+import {TabGroup, TabSummary} from "../@types/graytabby";
 
 interface Payload<T> {
   type: string
@@ -38,5 +38,5 @@ class Broker<MessageT> {
   }
 }
 
-export const moreTabs = new Broker<TabGroup>('moreTabs');
+export const moreTabs = new Broker<TabSummary[]>('moreTabs');
 export const pageLoad = new Broker<void>('pageLoad');
