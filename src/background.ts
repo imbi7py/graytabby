@@ -1,9 +1,7 @@
-import {actionClickHandler, closeTabs, createTab, getAllTabs, getURL, updateTab} from "./ext";
+import {actionClickHandler, closeTabs, createTab, getAllTabs, updateTab} from "./ext";
 import {moreTabs} from "./brokers";
 import {archivePlan} from "./archive";
 import {appURL} from "./utils";
-import nanoid = require("nanoid");
-import {tabsStore} from "./storage";
 
 
 async function clickHandler() {

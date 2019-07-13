@@ -11,7 +11,6 @@ class Store<PayloadT> {
 
   public put(value: PayloadT): Promise<void> {
     let entry: any = {};
-    console.log(value);
     let strVal = JSON.stringify(value);
     this.approxSize = Buffer.byteLength(strVal, 'utf8');
     entry[this.key] = strVal;
