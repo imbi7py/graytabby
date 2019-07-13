@@ -7,6 +7,7 @@ module.exports = {
   entry: {
     background: './src/background.ts',
     app: './src/app.ts',
+    options: './src/options.ts',
   },
   module: {
     rules: [
