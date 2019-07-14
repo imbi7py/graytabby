@@ -1,31 +1,16 @@
 <template>
   <div id="top">
-    <h1>Welcome to GrayTabby!</h1>
     <div id="debug">
       Debugging<br>
       Bytes in storage: {{approxSize()}}<br>
       Num tabs: {{numTabs()}}
       <button @click="double()">double</button>
+      <button @click="clear()">clear</button>
       <br>
     </div>
+    <h1>Welcome to GrayTabby!</h1>
     <div v-for="(group, gidx) in groups">
-      <span id="heading">
-        <b>{{new Date(group.date * 1000).toLocaleString()}}</b>
-        <span id="info">
-        ({{group.tabs.length}} tab{{group.tabs.length > 1 ? 's': ''}})
-        </span>
-      </span>
-      <ul>
-        <li v-for="(tab, tidx) in group.tabs" :key="tab.key"
-            :data-parent-gid="gidx">
-          <img-with-fallback :src="faviconLocation(tab.url)"
-                             fallback="/assets/img/logo.png"
-                             width="16" height="16"/>
-          <a :href="tab.url"
-             @click.left="clickLink($event, tab.url, gidx, tidx)"
-          >{{tab.title}}</a>
-        </li>
-      </ul>
+      <tab-section :group="group" :key="group.key" :removeFromParent="() => removeGroup(gidx)"></tab-section>
     </div>
   </div>
 </template>
@@ -35,9 +20,9 @@
   import nanoid from 'nanoid';
 
   import {moreTabs, pageLoad} from "../brokers";
-  import {faviconLocation} from "../utils";
   import {createTab} from "../ext";
   import imgWithFallback from './ImgWithFallback.vue';
+  import tabSection from './TabSection.vue';
   import {TabGroup, TabSummary} from "../../@types/graytabby";
   import {tabsStore} from "../storage";
 
@@ -52,17 +37,20 @@
     },
     mounted: async function () {
       this.groups = tabsStore.get() || [];
-      this.groups = this.groups.filter(g => g.tabs.length > 0)
+      this.groups = this.groups.filter(g => g.tabs.length > 0);
       moreTabs.sub(this.processMoreTabs);
       await pageLoad.pub(null);
     },
     methods: {
-      numTabs: function() {
+      removeGroup: function (gidx: number) {
+        this.groups.splice(gidx, 1);
+      },
+      numTabs: function () {
         let sum = 0;
         for (let group of this.groups) sum += group.tabs.length;
         return sum;
       },
-      processMoreTabs: function(tabSummaries: TabSummary[]) {
+      processMoreTabs: function (tabSummaries: TabSummary[]) {
         let now = new Date();
         let group: TabGroup = {
           tabs: tabSummaries,
@@ -86,52 +74,45 @@
       approxSize: function () {
         return tabsStore.approxSize;
       },
+      // Debug only...
       double: async function () {
         for (let tabGroup of [...this.groups]) {
-          this.processMoreTabs(tabGroup.tabs);
+          let summaries: TabSummary[] = [];
+          for (let tabSummary of tabGroup.tabs) {
+            summaries.push({...tabSummary});
+          }
+          this.processMoreTabs(summaries);
         }
       },
-      faviconLocation
+      clear: function () {
+        tabsStore.put([]);
+        window.location.reload();
+      }
     },
     watch: {
       groups: {
         handler: async function (newGroups) {
-          let start = new Date().getTime();
           tabsStore.put(newGroups);
-          console.log('put in', new Date().getTime() - start)
         },
         deep: true
       }
     },
     components: {
-      imgWithFallback
+      imgWithFallback,
+      tabSection
     }
   });
 
 </script>
 
+<style>
+</style>
+
 <style scoped>
+  @import url('https://fonts.googleapis.com/css?family=Roboto+Mono&display=swap');
+
   #top {
-    font-size: 12px;
-  }
-
-  /*#heading {*/
-  /*  font-family: Palatino, serif;*/
-  /*}*/
-
-  ul {
-    list-style-type: none;
-    padding-left: 20px;
-  }
-
-  a {
-    font-family: Arial, sans-serif;
-    padding-left: 5px;
-  }
-
-  #info {
-    padding-left: 10px;
-    color: gray;
+    font-family: 'Roboto Mono', monospace;
   }
 
   #debug {
