@@ -8,25 +8,33 @@
       <button @click="double()">double</button>
       <br>
     </div>
-    <div v-for="(group, gidx) in groups">
+    <DynamicScroller  :items="groups" key-field="key" :min-item-size="1">
+      <template v-slot="{item, index, active}">
+        <DynamicScrollerItem :item="item" :active="active" :data-index="index" :size-dependencies="[item.tabs]">
+<!--      <div v-for="(group, gidx) in groups">-->
+          <div>
       <span id="heading">
-        <b>{{new Date(group.date * 1000).toLocaleString()}}</b>
+        <b>{{new Date(item.date * 1000).toLocaleString()}}</b>
         <span id="info">
-        ({{group.tabs.length}} tab{{group.tabs.length > 1 ? 's': ''}})
+        ({{item.tabs.length}} tab{{item.tabs.length > 1 ? 's': ''}})
+        [{{index}} {{item.key}}]
         </span>
       </span>
-      <ul>
-        <li v-for="(tab, tidx) in group.tabs" :key="tab.key"
-            :data-parent-gid="gidx">
-          <img-with-fallback :src="faviconLocation(tab.url)"
-                             fallback="/assets/img/logo.png"
-                             width="16" height="16"/>
-          <a :href="tab.url"
-             @click.left="clickLink($event, tab.url, gidx, tidx)"
-          >{{tab.title}}</a>
-        </li>
-      </ul>
-    </div>
+        <ul>
+          <li v-for="(tab, tidx) in item.tabs" :key="tab.key">
+            <img-with-fallback :src="faviconLocation(tab.url)"
+                               fallback="/assets/img/logo.png"
+                               width="16" height="16"/>
+            <a :href="tab.url"
+               @click.left="clickLink($event, index, tidx)"
+            >{{tab.title}}</a> [{{tab.key}}]
+          </li>
+        </ul>
+<!--      </div>-->
+          </div>
+        </DynamicScrollerItem>
+      </template>
+    </DynamicScroller>
   </div>
 </template>
 
@@ -75,13 +83,13 @@
         }
         this.groups.unshift(group);
       },
-      clickLink: function (event: Event, url: string, gidx: number, tidx: number) {
+      clickLink: function (event: Event, gidx: number, tidx: number) {
         event.preventDefault();
-        this.groups[gidx].tabs.splice(tidx, 1);
+        let deletedTab = this.groups[gidx].tabs.splice(tidx, 1)[0];
         if (this.groups[gidx].tabs.length == 0) {
           this.groups.splice(gidx, 1);
         }
-        createTab({url, active: false});
+        createTab({url: deletedTab.url, active: false});
       },
       approxSize: function () {
         return tabsStore.approxSize;
@@ -119,6 +127,10 @@
   /*  font-family: Palatino, serif;*/
   /*}*/
 
+  .scroller {
+    height: 100%;
+  }
+
   ul {
     list-style-type: none;
     padding-left: 20px;
@@ -142,5 +154,7 @@
     -webkit-box-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
     -moz-border-radius: 15px;
     -webkit-border-radius: 15px;
+    position: fixed;
+    z-index: 1000;
   }
 </style>

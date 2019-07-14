@@ -1,4 +1,4 @@
-import {TabGroup, TabSummary} from "../@types/graytabby";
+import {TabSummary} from "../@types/graytabby";
 import {getURL} from "./ext";
 
 export function castTab(nativeTab: any): TabSummary | null {
@@ -19,19 +19,6 @@ export function castTab(nativeTab: any): TabSummary | null {
 
 export function appURL(): string {
   return getURL('app.html');
-}
-
-export function groupsFromLocalStorage(): TabGroup[] {
-  let bytes = localStorage.getItem('groups');
-  if (bytes == null) return [];
-  let groups: TabGroup[] = JSON.parse(bytes);
-  // This filter is really just in case cleanup didn't happen properly,
-  // or if malformed tabs got in to storage.
-  return groups.filter(g => g.date && g.tabs.length > 0)
-}
-
-export function groupsToLocalStorage(groups: TabGroup[]) {
-  localStorage.setItem('groups', JSON.stringify(groups));
 }
 
 export function getDomain(url: string): string {
