@@ -9,9 +9,18 @@
       <br>
     </div>
     <h1>Welcome to GrayTabby!</h1>
-    <div v-for="(group, gidx) in groups">
-      <tab-section :group="group" :key="group.key" :removeFromParent="() => removeGroup(gidx)"></tab-section>
-    </div>
+    <DynamicScroller :items="groups" class="scroller" :min-item-size="1" :pageMode="true" keyField="key">
+      <template v-slot="{ item, index, active }">
+        <DynamicScrollerItem
+          :item="item"
+          :active="active"
+          :size-dependencies="[item.tabs.length]"
+          :data-index="index">
+          <tab-section :group="item" :key="item.key" :removeFromParent="() => removeGroup(index)"></tab-section>
+          <div class="under"></div>
+        </DynamicScrollerItem>
+      </template>
+    </DynamicScroller>
   </div>
 </template>
 
@@ -24,7 +33,7 @@
   import imgWithFallback from './ImgWithFallback.vue';
   import tabSection from './TabSection.vue';
   import {TabGroup, TabSummary} from "../../@types/graytabby";
-  import {tabsStore} from "../storage";
+  import {localStorageUsage, tabsStore} from "../storage";
 
   export default Vue.extend({
     data: function () {
@@ -72,7 +81,7 @@
         createTab({url, active: false});
       },
       approxSize: function () {
-        return tabsStore.approxSize;
+        return localStorageUsage().toFixed(2);
       },
       // Debug only...
       double: async function () {
@@ -116,12 +125,20 @@
   }
 
   #debug {
-    float: right;
     padding: 10px;
     margin: 7px auto;
     -moz-box-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
     -webkit-box-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
     -moz-border-radius: 15px;
     -webkit-border-radius: 15px;
+  }
+
+  .under {
+    padding-bottom: 10px;
+  }
+
+  .scroller {
+    height: 100%;
+    /*height: 500px;*/
   }
 </style>

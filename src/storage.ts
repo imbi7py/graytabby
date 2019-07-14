@@ -19,5 +19,14 @@ class Store<PayloadT> {
   }
 }
 
+export function localStorageUsage(): number {
+  let total = 0;
+  for (let item of ['tabGroups']) {
+    total += (localStorage[item].length * 2) / 1024 / 1024
+  }
+  console.log(total);
+  return total;
+}
+
 export const optionsStore = new Store<Options>('options');
 export const tabsStore = new Store<TabGroup[]>('tabGroups');
