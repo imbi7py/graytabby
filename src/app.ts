@@ -18,24 +18,34 @@ function makeElement(type: string,
   return elem;
 }
 
+function snip<T>(arr: T[], func: (arg: T) => boolean): T[] {
+  let idx = arr.findIndex(func);
+  arr.splice(idx, 1);
+  return arr;
+}
+
 function linkRow(group: TabGroup, tab: KeyedTabSummary): Element {
   let row = makeElement('div');
   row.appendChild(renderFavicon(tab.url));
   let a = <HTMLAnchorElement>row.appendChild(
-    makeElement('a', {href: tab.url, target: '_new'}, tab.title));
+    makeElement('a', {href: tab.url}, tab.title));
   a.onclick = event => {
     event.preventDefault();
     createTab({url: tab.url, active: false});
     row.parentElement.removeChild(row);
-    let idx = group.tabs.findIndex(t => t.key === tab.key);
-    group.tabs.splice(idx, 1);
+    snip(group.tabs, t => t.key === tab.key);
+    if (group.tabs.length == 0) {
+      snip(tabGroups, tg => tg.key === group.key);
+      let found = document.querySelector(`[data-id='${group.key}']`);
+      groupDom.removeChild(found);
+    }
     tabsStore.put(tabGroups);
   };
   return row;
 }
 
 function renderGroup(group: TabGroup): Element {
-  let div = makeElement('div');
+  let div = makeElement('div', {'data-id': group.key});
   div.appendChild(makeElement('span', {}, new Date(group.date * 1000).toLocaleString()));
   let ul = div.appendChild(document.createElement('ul'));
   for (let tab of group.tabs) {
@@ -66,6 +76,7 @@ let tabGroups = tabsStore.get();
 let groupDom = document.querySelector('#groupsDiv');
 
 if (tabGroups) {
+  // tabGroups = tabGroups.filter(tg => tg.tabs.length > 0);
   for (let group of tabGroups) groupDom.appendChild(renderGroup(group));
 }
 
@@ -73,14 +84,45 @@ function ingestTabs(tabSummaries: TabSummary[]) {
   let groupKey = nanoid(9);
   let counter = 0;
   let group: TabGroup = {
-    tabs: tabSummaries.map(ts => {return {...ts, key: groupKey + counter++}}),
+    tabs: tabSummaries.map(ts => {
+      return {...ts, key: groupKey + counter++}
+    }),
     key: groupKey,
     date: Math.round(new Date().getTime() / 1000)
   };
-  console.log(group.tabs.map(x => x.key));
   tabGroups.unshift(group);
   prependInsideContainer(groupDom, renderGroup(group));
   tabsStore.put(tabGroups);
 }
 
 moreTabs.sub(ingestTabs);
+
+// document.querySelector('body').appendChild(
+//   makeElement('debug', {id: '#debug'}).appendChild(
+//     makeElement('span', {}, 'hi'))
+// );
+
+function updateInfo(): void {
+  let info = <HTMLSpanElement>document.querySelector('#info');
+  info.innerText = tabGroups.reduce(
+    (acc, curr) => acc + curr.tabs.length, 0
+  ).toString();
+}
+
+function injectDebug(): void {
+  let body = document.querySelector('body');
+  let debug = prependInsideContainer(body, makeElement('div', {id: 'debug'}));
+  let button = <HTMLButtonElement>debug.appendChild(makeElement(
+    'button', {}, 'double'
+  ));
+  button.onclick = event => {
+    for (let group of [...tabGroups]) {
+      ingestTabs(group.tabs)
+      updateInfo();
+    }
+  };
+}
+
+injectDebug();
+updateInfo();
+
