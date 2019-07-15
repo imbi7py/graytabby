@@ -4,11 +4,14 @@ export interface TabSummary {
   id: number,
   url: string,
   title: string,
-  key?: string
+}
+
+export interface KeyedTabSummary extends TabSummary {
+  key: string
 }
 
 export interface TabGroup {
-  tabs: TabSummary[],
+  tabs: KeyedTabSummary[],
   date: number,
   key: string
 }
