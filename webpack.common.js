@@ -1,6 +1,5 @@
 const path = require('path');
 const CopyPlugin = require('copy-webpack-plugin');
-const VueLoaderPlugin = require('vue-loader/lib/plugin');
 
 // see https://webpack.js.org/configuration/
 module.exports = {
@@ -26,7 +25,6 @@ module.exports = {
     publicPath: '/'
   },
   plugins: [
-    new VueLoaderPlugin(),
     new CopyPlugin([
       {from: 'manifest.json', to: 'manifest.json'},
       {from: 'assets', to: 'assets'},
