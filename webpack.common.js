@@ -11,30 +11,14 @@ module.exports = {
   module: {
     rules: [
       {
-        test: /\.tsx?$/,
+        test: /\.ts$/,
         loader: 'ts-loader',
-        options: {
-          appendTsSuffixTo: [/\.vue$/]
-        },
         exclude: /node_modules/,
       },
-      {
-        // see https://vue-loader.vuejs.org/guide/#manual-setup
-        test: /\.vue$/,
-        loader: 'vue-loader',
-        exclude: /node_modules/,
-      },
-      {
-        test: /\.css$/,
-        use: [
-          'vue-style-loader',
-          'css-loader'
-        ]
-      }
     ]
   },
   resolve: {
-    extensions: ['.ts', '.vue', '.js']
+    extensions: ['.ts', '.js']
   },
   output: {
     path: path.resolve(__dirname, 'dist'),
