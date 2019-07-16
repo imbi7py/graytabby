@@ -8,7 +8,7 @@
     "test:coveralls": "npm run test:coverage && cat ./coverage/lcov.info | coveralls",
     "develop": "webpack --watch --config webpack.dev.js",
     "build": "webpack --config webpack.prod.js",
-    "clean": "rm -rf dist node_modules"
+    "clean": "rm -rf dist node_modules package-lock.json; npm i"
   },
   "keywords": [],
   "author": "",
