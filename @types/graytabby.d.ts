@@ -17,5 +17,5 @@ export interface TabGroup {
 }
 
 export interface Options {
-  fontSize: number
+  tabLimit: number
 }

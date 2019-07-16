@@ -3,7 +3,7 @@
  * data structures and will attach the GrayTabby app to the HTML element with id = 'app'.
  */
 
-import {tabsStore} from "./storage";
+import {optionsStore, tabsStore} from "./storage";
 import {KeyedTabSummary, TabGroup, TabSummary} from "../@types/graytabby";
 import {faviconLocation, makeElement, snip} from "./utils";
 import {moreTabs, pageLoad} from "./brokers";
@@ -14,6 +14,7 @@ import nanoid = require("nanoid");
  * The data representation of a user's graytabby state.
  */
 let tabGroups = tabsStore.get() || [];
+let options = optionsStore.get() || {tabLimit: 6000};
 
 function totalTabs(): number {
   return tabGroups.reduce(
@@ -44,11 +45,6 @@ let infoNode = appNode.appendChild(
 function updateInfo(): void {
   infoNode.innerText = 'Total tabs: ' + totalTabs().toString();
 }
-
-/**
- * Keep as few groups as possible so that we preserve at least this many tabs.
- */
-let tabLimit = 100;
 
 /**
  * The root node of the list of tab groups.
@@ -117,7 +113,7 @@ function ingestTabs(tabSummaries: TabSummary[]) {
   prependInsideContainer(groupsNode, renderGroup(group));
 
   let lastRemoved: TabGroup;
-  while (totalTabs() > tabLimit) {
+  while (totalTabs() > options.tabLimit) {
     lastRemoved = tabGroups[tabGroups.length - 1];
     removeGroup(lastRemoved);
   }
@@ -150,6 +146,10 @@ function empty() {
 window.double = double;
 // @ts-ignore
 window.empty = empty;
-
+// @ts-ignore
+window.setTabLimit = function(amt: number) {
+  options.tabLimit = amt;
+  optionsStore.put(options);
+};
 
 pageLoad.pub(null);
