@@ -1,31 +1,63 @@
+/**
+ * Importing this module (in an HTML page or otherwise) will initialize GrayTabby
+ * data structures and will attach the GrayTabby app to the HTML element with id = 'app'.
+ */
+
 import {tabsStore} from "./storage";
 import {KeyedTabSummary, TabGroup, TabSummary} from "../@types/graytabby";
-import {faviconLocation} from "./utils";
+import {faviconLocation, makeElement, snip} from "./utils";
 import {moreTabs} from "./brokers";
-import nanoid = require("nanoid");
 import {createTab} from "./ext";
+import nanoid = require("nanoid");
 
-function makeElement(type: string,
-                     attrs: { [key: string]: string } = {},
-                     text?: string): Element {
-  let elem = document.createElement(type);
-  for (let key in attrs) {
-    elem.setAttribute(key, attrs[key]);
-  }
-  if (text !== undefined) {
-    elem.innerText = text;
-  }
-  return elem;
+/**
+ * The data representation of a user's graytabby state.
+ */
+let tabGroups = tabsStore.get() || [];
+
+function totalTabs(): number {
+  return tabGroups.reduce(
+    (acc, cur) => acc + cur.tabs.length, 0
+  )
 }
 
-function snip<T>(arr: T[], func: (arg: T) => boolean): T[] {
-  let idx = arr.findIndex(func);
-  arr.splice(idx, 1);
-  return arr;
+function removeGroup(group: TabGroup): Element {
+  let found = document.querySelector(`[id='${group.key}']`);
+  groupsNode.removeChild(found);
+  snip(tabGroups, tg => tg.key === group.key);
+  return found;
 }
 
-function linkRow(group: TabGroup, tab: KeyedTabSummary): Element {
-  let row = makeElement('div');
+/**
+ * The root node for the whole application.
+ */
+let appNode = <HTMLDivElement>document.querySelector('#app');
+appNode.appendChild(makeElement('h1', {}, 'welcome to graytabby'));
+
+/**
+ * Node for displaying high level information to the user.
+ */
+let infoNode = appNode.appendChild(
+  <HTMLParagraphElement>makeElement('p')
+);
+
+function updateInfo(): void {
+  infoNode.innerText = 'Total tabs: ' + totalTabs().toString();
+}
+
+/**
+ * Keep as few groups as possible so that we preserve at least this many tabs.
+ */
+let tabLimit = 10000;
+
+/**
+ * The root node of the list of tab groups.
+ */
+let groupsNode = appNode.appendChild(
+  <HTMLDivElement>makeElement('div', {}, 'groups'));
+
+function renderLinkRow(group: TabGroup, tab: KeyedTabSummary): HTMLDivElement {
+  let row = <HTMLDivElement>makeElement('div');
   row.appendChild(renderFavicon(tab.url));
   let a = <HTMLAnchorElement>row.appendChild(
     makeElement('a', {href: tab.url}, tab.title));
@@ -34,32 +66,27 @@ function linkRow(group: TabGroup, tab: KeyedTabSummary): Element {
     createTab({url: tab.url, active: false});
     row.parentElement.removeChild(row);
     snip(group.tabs, t => t.key === tab.key);
-    if (group.tabs.length == 0) {
-      snip(tabGroups, tg => tg.key === group.key);
-      let found = document.querySelector(`[data-id='${group.key}']`);
-      groupDom.removeChild(found);
-    }
+    if (group.tabs.length == 0) removeGroup(group);
     tabsStore.put(tabGroups);
+    updateInfo();
   };
   return row;
 }
 
-function renderGroup(group: TabGroup): Element {
-  let div = makeElement('div', {'data-id': group.key});
+function renderGroup(group: TabGroup): HTMLDivElement {
+  let div = <HTMLDivElement>makeElement('div', {'id': group.key});
   div.appendChild(makeElement('span', {}, new Date(group.date * 1000).toLocaleString()));
-  let ul = div.appendChild(document.createElement('ul'));
+  let ul = div.appendChild(makeElement('ul'));
   for (let tab of group.tabs) {
     let li = ul.appendChild(makeElement('li'));
-    // li.appendChild(renderFavicon(tab.url));
-    // li.appendChild(makeElement('a', {href: tab.url, target: '_new'}, tab.title));
-    li.appendChild(linkRow(group, tab));
+    li.appendChild(renderLinkRow(group, tab));
   }
   return div;
 }
 
-function renderFavicon(url: string): Element {
+function renderFavicon(url: string): HTMLImageElement {
   let loc = faviconLocation(url);
-  return makeElement('img', {
+  return <HTMLImageElement>makeElement('img', {
     src: loc,
     width: '16',
     height: '16'
@@ -72,12 +99,8 @@ function prependInsideContainer(parent: Element, child: Element): Element {
   return child;
 }
 
-let tabGroups = tabsStore.get();
-let groupDom = document.querySelector('#groupsDiv');
-
 if (tabGroups) {
-  // tabGroups = tabGroups.filter(tg => tg.tabs.length > 0);
-  for (let group of tabGroups) groupDom.appendChild(renderGroup(group));
+  for (let group of tabGroups) groupsNode.appendChild(renderGroup(group));
 }
 
 function ingestTabs(tabSummaries: TabSummary[]) {
@@ -91,38 +114,28 @@ function ingestTabs(tabSummaries: TabSummary[]) {
     date: Math.round(new Date().getTime() / 1000)
   };
   tabGroups.unshift(group);
-  prependInsideContainer(groupDom, renderGroup(group));
+  prependInsideContainer(groupsNode, renderGroup(group));
   tabsStore.put(tabGroups);
+  updateInfo();
 }
 
 moreTabs.sub(ingestTabs);
-
-// document.querySelector('body').appendChild(
-//   makeElement('debug', {id: '#debug'}).appendChild(
-//     makeElement('span', {}, 'hi'))
-// );
-
-function updateInfo(): void {
-  let info = <HTMLSpanElement>document.querySelector('#info');
-  info.innerText = tabGroups.reduce(
-    (acc, curr) => acc + curr.tabs.length, 0
-  ).toString();
-}
-
-function injectDebug(): void {
-  let body = document.querySelector('body');
-  let debug = prependInsideContainer(body, makeElement('div', {id: 'debug'}));
-  let button = <HTMLButtonElement>debug.appendChild(makeElement(
-    'button', {}, 'double'
-  ));
-  button.onclick = event => {
-    for (let group of [...tabGroups]) {
-      ingestTabs(group.tabs)
-      updateInfo();
-    }
-  };
-}
-
-injectDebug();
 updateInfo();
 
+
+// Debugging...
+function double() {
+  for (let group of [...tabGroups]) {
+    ingestTabs(group.tabs);
+  }
+}
+
+function empty() {
+  tabsStore.put([]);
+  window.location.reload();
+}
+
+// @ts-ignore
+window.double = double;
+// @ts-ignore
+window.empty = empty;
