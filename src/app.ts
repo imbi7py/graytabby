@@ -6,7 +6,7 @@
 import {tabsStore} from "./storage";
 import {KeyedTabSummary, TabGroup, TabSummary} from "../@types/graytabby";
 import {faviconLocation, makeElement, snip} from "./utils";
-import {moreTabs} from "./brokers";
+import {moreTabs, pageLoad} from "./brokers";
 import {createTab} from "./ext";
 import nanoid = require("nanoid");
 
@@ -48,13 +48,13 @@ function updateInfo(): void {
 /**
  * Keep as few groups as possible so that we preserve at least this many tabs.
  */
-let tabLimit = 10000;
+let tabLimit = 100;
 
 /**
  * The root node of the list of tab groups.
  */
 let groupsNode = appNode.appendChild(
-  <HTMLDivElement>makeElement('div', {}, 'groups'));
+  <HTMLDivElement>makeElement('div'));
 
 function renderLinkRow(group: TabGroup, tab: KeyedTabSummary): HTMLDivElement {
   let row = <HTMLDivElement>makeElement('div');
@@ -115,6 +115,17 @@ function ingestTabs(tabSummaries: TabSummary[]) {
   };
   tabGroups.unshift(group);
   prependInsideContainer(groupsNode, renderGroup(group));
+
+  let lastRemoved: TabGroup;
+  while (totalTabs() > tabLimit) {
+    lastRemoved = tabGroups[tabGroups.length - 1];
+    removeGroup(lastRemoved);
+  }
+  if (lastRemoved !== undefined) {
+    tabGroups.push(lastRemoved);
+    groupsNode.appendChild(renderGroup(lastRemoved));
+  }
+
   tabsStore.put(tabGroups);
   updateInfo();
 }
@@ -139,3 +150,6 @@ function empty() {
 window.double = double;
 // @ts-ignore
 window.empty = empty;
+
+
+pageLoad.pub(null);
